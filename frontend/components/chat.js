@@ -1,21 +1,14 @@
 "use client";
 
-export default function Chat() {
+export default function Chat({ question, answer }) {
   return (
-    <div className="flex-col h-full">
-      <p className="text-center">contestant 1</p>
-      <div className="bg-slate-500 flex-col rounded-lg m-2 overflow-auto h-full">
+    <div className="flex-col">
+      <div className="flex-col rounded-lg m-2 overflow-auto">
         <p className="text-right min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400 ml-auto">
-          test
+          {question}
         </p>
         <p className="min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400">
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
+          {answer.text}
         </p>
       </div>
     </div>
