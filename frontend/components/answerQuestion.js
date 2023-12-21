@@ -2,14 +2,19 @@
 import { Textarea } from "@nextui-org/react";
 import { useState } from "react";
 
-export default function AnswerQuestion({ gameId }) {
+export default function AnswerQuestion({ gameId, question }) {
   const [answer, setAnswer] = useState("");
+  console.log(question);
 
   const clickHandler = () => {
-    fetch("/api/answer-question", {
+    fetch("http://localhost:5000/api/answer-question", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         game_id: gameId,
+        question_id: question ? question.id : null,
         user_answer: answer,
       }),
     }).then(() => {

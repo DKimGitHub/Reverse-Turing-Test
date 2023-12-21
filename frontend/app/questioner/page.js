@@ -16,7 +16,7 @@ export default function Questioner({ searchParams }) {
         .then((data) => {
           setGame(data);
         });
-    }, 500);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);

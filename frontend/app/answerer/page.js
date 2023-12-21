@@ -1,7 +1,7 @@
 "use client";
-import { Textarea } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import AnswerQuestion from "../../components/answerQuestion";
+import Question from "../../components/question";
 
 export default function Answerer({ searchParams }) {
   const gameId = searchParams.gameId;
@@ -10,18 +10,22 @@ export default function Answerer({ searchParams }) {
   useEffect(() => {
     if (!gameId) return;
 
-    fetch(`http://localhost:5000/api/games/${gameId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setGame(data);
-      });
+    const interval = setInterval(() => {
+      fetch(`http://localhost:5000/api/games/${gameId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setGame(data);
+        });
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="h-full">
       <div className="grid grid-cols-2 bg-slate-500 rounded-md">
-        <p className="text-center text-medium h-8">Your Answers</p>
         <p className="text-center text-medium h-8">AI Answers</p>
+        <p className="text-center text-medium h-8">Your Answers</p>
         {game &&
           game.questions.map((question) => (
             <Question key={question.id} question={question} />
@@ -60,7 +64,7 @@ export default function Answerer({ searchParams }) {
           </div>
         </div>
       </div> */}
-    <AnswerQuestion  gameId={gameId} />
+    <AnswerQuestion gameId={gameId} question={game && game.questions.length > 0 ? game.questions[game.questions.length - 1] : null} />
     </div>
   );
 }
