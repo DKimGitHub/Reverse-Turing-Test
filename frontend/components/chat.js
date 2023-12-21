@@ -7,9 +7,11 @@ export default function Chat({ question, answer }) {
         <p className="text-right min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400 ml-auto">
           {question}
         </p>
-        <p className="min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400">
-          {answer.text}
-        </p>
+        {answer && (
+          <p className="min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400">
+            {answer.text}
+          </p>
+        )}
       </div>
     </div>
   );

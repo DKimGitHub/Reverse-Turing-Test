@@ -1,11 +1,16 @@
 "use client";
 import { Textarea } from "@nextui-org/react";
+import { useState, useEffect } from "react";
 
 export default function Answerer({ searchParams }) {
   const gameId = searchParams.gameId;
   const [game, setGame] = useState(null);
 
   useEffect(() => {
+<<<<<<< Updated upstream
+=======
+    gameId = localStorage.getItem("gameId") || "";
+>>>>>>> Stashed changes
     if (!gameId) return;
 
     fetch(`http://localhost:5000/api/games/${gameId}`)
@@ -20,9 +25,15 @@ export default function Answerer({ searchParams }) {
   };
   return (
     <div className="h-full">
-      <div className="h-4/5 grid grid-cols-2">
-        <div className="flex-col h-full">
-          <p className="text-center">Your Answers</p>
+      <div className="grid grid-cols-2 bg-slate-500 rounded-md">
+        <p className="text-center text-medium h-8">Your Answers</p>
+        <p className="text-center text-medium h-8">AI Answers</p>
+        {game &&
+          game.questions.map((question) => (
+            <Question key={question.id} question={question} />
+          ))}
+      </div>
+      {/* <div className="flex-col h-full">
           <div className="bg-slate-500 flex-col rounded-lg m-2 overflow-auto h-full">
             <p className="text-right min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400 ml-auto">
               test
@@ -42,7 +53,6 @@ export default function Answerer({ searchParams }) {
           </div>
         </div>
         <div className="flex-col h-full">
-          <p className="text-center">AI Answers</p>
           <div className="bg-slate-500 flex-col rounded-lg m-2 overflow-auto h-full">
             <p className="text-right min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400 ml-auto">
               test
@@ -55,12 +65,12 @@ export default function Answerer({ searchParams }) {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="min-h-36 flex justify-center items-center">
         <div className="w-[48rem] flex">
           <Textarea
-            aria-label="Comment Field"
+            aria-label="Answer Field"
             className="flex-1"
             fullWidth
             placeholder="Answer the question like an AI!"
