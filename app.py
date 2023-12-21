@@ -1,11 +1,14 @@
 from flask import Flask, send_from_directory, g, request, jsonify
 from flask_cors import CORS
-from constants import OPENAI_API_KEY
 import openai
 from peewee import *
 from playhouse.shortcuts import model_to_dict
 from uuid import uuid4
+from dotenv import load_dotenv
 import logging
+
+load_dotenv()
+
 logger = logging.getLogger('peewee')
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
@@ -106,7 +109,7 @@ def ask_question():
 
     messages.append({"role": "user", "content": new_question_text})
 
-    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    client = openai.OpenAI()
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages
