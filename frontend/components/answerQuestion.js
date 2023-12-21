@@ -10,7 +10,7 @@ export default function AnswerQuestion({ gameId }) {
       method: "POST",
       body: JSON.stringify({
         game_id: gameId,
-        user_answer,
+        user_answer: answer,
       }),
     }).then(() => {
       setAnswer("");

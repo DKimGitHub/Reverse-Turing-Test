@@ -18,12 +18,12 @@ export default function Home() {
         The Reverse Turing Test!!!
       </p>
       <p className="text-xl text-center p-2">
-        The Turing Test is a test for determining whether or not an AI is
+        Definition: The Turing Test is a test for determining whether or not an AI is
         capable of thinking like a human being.{" "}
       </p>
       <p className="text-xl text-center p-2">
         But the REVERSE Turing Test is a test for determining whether or not a
-        human being is capable of thinking like an AI.
+        human being is capable of thinking like an AI. 😈
       </p>
       <div className="pt-10 text-center">
         <Link
