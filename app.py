@@ -1,5 +1,7 @@
-from flask import Flask, send_from_directory, g
+from flask import Flask, send_from_directory, g, request, jsonify
 from flask_cors import CORS
+from constants import OPENAI_API_KEY
+import openai
 from peewee import *
 from playhouse.shortcuts import model_to_dict
 from uuid import uuid4
@@ -38,6 +40,8 @@ def create_tables():
     with database:
         database.create_tables([Game, Question, Answer])
 
+create_tables()
+
 @app.before_request
 def before_request():
     g.db = database
@@ -56,38 +60,6 @@ def serve(path):
 @app.route('/api/games', methods=['POST'])
 def create_game():
     game = Game.create(id=uuid4())
-    question = Question.create(
-        game=game,
-        player_answer=None,
-        bot_answer=None,
-        text='What is the capital of France?'
-    )
-    player_answer = Answer.create(
-        text='Paris, duh'
-    )
-    bot_answer = Answer.create(
-        text='Why, Paris, of course!'
-    )
-    question.player_answer = player_answer
-    question.bot_answer = bot_answer
-    question.save()
-
-    next_question = Question.create(
-        game=game,
-        player_answer=None,
-        bot_answer=None,
-        text='What is the capital of Germany?'
-    )
-    next_player_answer = Answer.create(
-        text='Berlin, duh'
-    )
-    next_bot_answer = Answer.create(
-        text='Why, Berlin, of course!'
-    )
-    next_question.player_answer = next_player_answer
-    next_question.bot_answer = next_bot_answer
-    next_question.save()
-
     return model_to_dict(game)
 
 # get game state
@@ -112,12 +84,59 @@ def get_game(game_id):
 
     return game_dict
 
-# ask question
-# - get game and any previous questions and bot answers
-# - create question
-# - create bot answer by sending previous questions, previous bot answers and new question to GPT
+@app.route('/api/ask-question', methods=['POST'])
+def ask_question():
+    data = request.json
+    game_id = data.get('game_id')
+    new_question_text = data.get('question')
+
+    # Create and save the new question first
+    new_question = Question.create(game=game_id, text=new_question_text, player_answer=None, bot_answer=None)
+
+    previous_questions = Question.select().where(Question.game == game_id).order_by(Question.id.desc())
+
+    messages = [{"role": "system", "content": "Mimic the player's style in your responses."}]
+
+    for question in previous_questions:
+        player_answer = Answer.select().where(Answer.id == question.player_answer).get().text if question.player_answer else None
+        bot_answer = Answer.select().where(Answer.id == question.bot_answer).get().text if question.bot_answer else None
+        if player_answer and bot_answer:
+            messages.append({"role": "user", "content": player_answer})
+            messages.append({"role": "assistant", "content": bot_answer})
+
+    messages.append({"role": "user", "content": new_question_text})
+
+    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=messages
+    )
+    ai_answer_text = response.choices[0].message.content
+
+    # Save the AI answer
+    ai_answer = Answer.create(text=ai_answer_text)
+    new_question.bot_answer = ai_answer
+    new_question.save()
+
+    return jsonify({
+        'question_id': new_question.id,
+        'ai_answer': ai_answer_text
+    })
+
 
 # answer question
+@app.route('/api/answer-question', methods=['POST'])
+def answer_question():
+    data = request.json
+    question_id = data.get('question_id')
+    user_answer_text = data.get('user_answer')
+
+    user_answer = Answer.create(text=user_answer_text)
+    question = Question.get_by_id(question_id)
+    question.player_answer = user_answer
+    question.save()
+
+    return jsonify({'status': 'success'})
 
 # flag answer as correct
 @app.route('/api/answers/<int:answer_id>', methods=['PUT'])
@@ -128,5 +147,4 @@ def rate_answer(answer_id):
     return model_to_dict(answer)
 
 if __name__ == '__main__':
-    create_tables()
     app.run()
