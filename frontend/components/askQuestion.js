@@ -22,7 +22,7 @@ export default function AskQuestion({ gameId }) {
     <div className="min-h-36 flex justify-center items-center">
       <div className="w-[48rem] flex">
       <Textarea
-        aria-label="Comment Field"
+        aria-label="Question Field"
         className="flex-1"
         fullWidth
         placeholder="Ask your question!"
