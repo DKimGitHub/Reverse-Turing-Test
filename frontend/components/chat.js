@@ -3,7 +3,7 @@
 export default function Chat() {
   return (
     <div className="flex-col h-full">
-      <p >contestant 1</p>
+      <p className="text-center">contestant 1</p>
       <div className="bg-slate-500 flex-col rounded-lg m-2 overflow-auto h-full">
         <p className="text-right min-w-min max-w-[80%] rounded-md m-2 p-2 bg-slate-400 ml-auto">
           test

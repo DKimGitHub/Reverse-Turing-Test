@@ -2,7 +2,7 @@
 
 import { Textarea } from "@nextui-org/react";
 
-export default function Ask() {
+export default function AskQuestion() {
 
 const clickHandler = () => {
     return null
