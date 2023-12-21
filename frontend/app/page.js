@@ -1,6 +1,15 @@
+'use client'
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    fetch("http://localhost:5000/api/games", { method: "POST" })
+      .then((res) => res.json())
+      .then((data) => {
+        localStorage.setItem('gameId', data.id);
+      });
+  }, []);
   return (
     <div className="flex-col justify-center items-center">
       <p className="text-6xl text-center p-8 pt-16">
