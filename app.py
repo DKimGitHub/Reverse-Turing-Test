@@ -90,30 +90,33 @@ def ask_question():
     game_id = data.get('game_id')
     new_question_text = data.get('question')
 
-    # Create and save the new question first
     new_question = Question.create(game=game_id, text=new_question_text, player_answer=None, bot_answer=None)
 
-    previous_questions = Question.select().where(Question.game == game_id).order_by(Question.id.desc())
+    recent_player_answers = (Question
+                             .select(Question, Answer)
+                             .join(Answer, JOIN.LEFT_OUTER, on=(Question.player_answer == Answer.id))
+                             .where(Question.game == game_id)
+                             .order_by(Question.id.desc())
+                             .limit(3))
 
-    messages = [{"role": "system", "content": "Mimic the player's style in your responses."}]
+    messages = [{"role": "system", "content": "Your task is to provide an answer to the users question. Mimic the succinctness of the user's previous answers, avoiding verbosity, matching the users level of detail, verbosity, and reply length."}]
 
-    for question in previous_questions:
-        player_answer = Answer.select().where(Answer.id == question.player_answer).get().text if question.player_answer else None
-        bot_answer = Answer.select().where(Answer.id == question.bot_answer).get().text if question.bot_answer else None
-        if player_answer and bot_answer:
-            messages.append({"role": "user", "content": player_answer})
-            messages.append({"role": "assistant", "content": bot_answer})
+    for interaction in recent_player_answers:
+        if interaction.player_answer:
+            messages.append({"role": "user", "content": f"Previous player answers: {interaction.player_answer.text}"})
 
-    messages.append({"role": "user", "content": new_question_text})
+    messages.append({"role": "user", "content": f"New question text: {new_question_text}"})
 
+    print("Messages sent to GPT:")
+    for message in messages:
+        print(message)
     client = openai.OpenAI(api_key=OPENAI_API_KEY)
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=messages
     )
     ai_answer_text = response.choices[0].message.content
 
-    # Save the AI answer
     ai_answer = Answer.create(text=ai_answer_text)
     new_question.bot_answer = ai_answer
     new_question.save()
@@ -123,8 +126,6 @@ def ask_question():
         'ai_answer': ai_answer_text
     })
 
-
-# answer question
 @app.route('/api/answer-question', methods=['POST'])
 def answer_question():
     data = request.json
