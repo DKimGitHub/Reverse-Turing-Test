@@ -21,6 +21,19 @@ export default function Questioner({ searchParams }) {
     return () => clearInterval(interval);
   }, []);
 
+  let canAsk = false;
+  // check if the last question was answered
+  if (game) {
+    if (game.questions.length === 0) {
+      canAsk = true;
+    } else {
+      const lastQuestion = game.questions[game.questions.length - 1];
+      if (lastQuestion.player_answer) {
+        canAsk = true;
+      }
+    }
+  }
+
   return (
     <div>
       <div className="grid grid-cols-2 bg-slate-500 rounded-md">
@@ -29,7 +42,7 @@ export default function Questioner({ searchParams }) {
             <Question key={question.id} question={question} />
           ))}
       </div>
-      <AskQuestion gameId={gameId} />
+      {canAsk && <AskQuestion gameId={gameId} />}
     </div>
   );
 }
