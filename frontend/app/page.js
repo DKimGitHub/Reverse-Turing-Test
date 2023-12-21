@@ -1,38 +1,44 @@
-"use client";
+'use client'
+import Link from "next/link";
 import { useState, useEffect } from "react";
-import Ask from "../components/ask";
-import Question from "../components/question"
 
 export default function Home() {
   const [gameId, setGameId] = useState(null);
-  const [game, setGame] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/games", { method: "POST", })
+    fetch("http://localhost:5000/api/games", { method: "POST" })
       .then((res) => res.json())
       .then((data) => {
         setGameId(data.id);
       });
   }, []);
-
-  useEffect(() => {
-    if (!gameId) return;
-
-    fetch(`http://localhost:5000/api/games/${gameId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setGame(data);
-      });
-  }, [gameId]);
-
   return (
-    <div className="w-screen h-screen bg-slate-600">
-      <div className="grid grid-cols-2 bg-slate-500 rounded-md">
-        {game && game.questions.map((question) => (
-          <Question key={question.id} question={question} />
-        ))}
+    <div className="flex-col justify-center items-center">
+      <p className="text-6xl text-center p-8 pt-16">
+        The Reverse Turing Test!!!
+      </p>
+      <p className="text-xl text-center p-2">
+        The Turing Test is a test for determining whether or not an AI is
+        capable of thinking like a human being.{" "}
+      </p>
+      <p className="text-xl text-center p-2">
+        But the REVERSE Turing Test is a test for determining whether or not a
+        human being is capable of thinking like an AI.
+      </p>
+      <div className="pt-10 text-center">
+        <Link
+          href={gameId ? `/questioner?gameId=${gameId}` : "/"}
+          className="rounded-lg bg-slate-500 m-2 p-4 text-2xl"
+        >
+          I wanna be the questioner!
+        </Link>
+        <Link
+          href={gameId ? `/answerer?gameId=${gameId}` : "/"}
+          className="rounded-lg bg-slate-500 m-2 p-4 text-2xl w-16"
+        >
+          I wanna be the answerer!
+        </Link>
       </div>
-      <Ask />
     </div>
   );
 }

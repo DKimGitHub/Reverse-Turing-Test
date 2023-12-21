@@ -1,13 +1,24 @@
 "use client";
-
 import { Textarea } from "@nextui-org/react";
+import { useState } from "react";
 
-export default function Ask() {
+export default function AskQuestion({ gameId }) {
+  const [question, setQuestion] = useState("");
 
-const clickHandler = () => {
-    return null
-}
-    return (
+  const clickHandler = () => {
+    fetch('/api/ask-question', {
+      method: 'POST',
+      body: JSON.stringify({
+        game_id: gameId,
+        question
+      })
+    })
+      .then(() => {
+        setQuestion('');
+      });
+  }
+
+  return (
     <div className="min-h-36 flex justify-center items-center">
       <div className="w-[48rem] flex">
       <Textarea
@@ -16,6 +27,8 @@ const clickHandler = () => {
         fullWidth
         placeholder="Ask your question!"
         minRows={1}
+        value={question}
+        onValueChange={setQuestion}
       />
       <button
         onClick={clickHandler}

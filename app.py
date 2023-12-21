@@ -1,11 +1,14 @@
 from flask import Flask, send_from_directory, g, request, jsonify
 from flask_cors import CORS
-from constants import OPENAI_API_KEY
 import openai
 from peewee import *
 from playhouse.shortcuts import model_to_dict
 from uuid import uuid4
+from dotenv import load_dotenv
 import logging
+
+load_dotenv()
+
 logger = logging.getLogger('peewee')
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
@@ -70,7 +73,7 @@ def get_game(game_id):
 
     game = (Game
         .select(Game, Question, PlayerAnswer, BotAnswer)
-        .join(Question)
+        .join(Question, JOIN.LEFT_OUTER)
         .join(PlayerAnswer, JOIN.LEFT_OUTER, on=(Question.player_answer == PlayerAnswer.id))
         .switch(Question)
         .join(BotAnswer, JOIN.LEFT_OUTER, on=(Question.bot_answer == BotAnswer.id))
@@ -107,10 +110,7 @@ def ask_question():
 
     messages.append({"role": "user", "content": f"New question text: {new_question_text}"})
 
-    print("Messages sent to GPT:")
-    for message in messages:
-        print(message)
-    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    client = openai.OpenAI()
     response = client.chat.completions.create(
         model="gpt-4",
         messages=messages
