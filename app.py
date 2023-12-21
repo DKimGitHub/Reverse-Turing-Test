@@ -73,7 +73,7 @@ def get_game(game_id):
 
     game = (Game
         .select(Game, Question, PlayerAnswer, BotAnswer)
-        .join(Question)
+        .join(Question, JOIN.LEFT_OUTER)
         .join(PlayerAnswer, JOIN.LEFT_OUTER, on=(Question.player_answer == PlayerAnswer.id))
         .switch(Question)
         .join(BotAnswer, JOIN.LEFT_OUTER, on=(Question.bot_answer == BotAnswer.id))
