@@ -7,10 +7,6 @@ export default function Answerer({ searchParams }) {
   const [game, setGame] = useState(null);
 
   useEffect(() => {
-<<<<<<< Updated upstream
-=======
-    gameId = localStorage.getItem("gameId") || "";
->>>>>>> Stashed changes
     if (!gameId) return;
 
     fetch(`http://localhost:5000/api/games/${gameId}`)
