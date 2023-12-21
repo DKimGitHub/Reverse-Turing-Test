@@ -1,12 +1,11 @@
 "use client";
 import { Textarea } from "@nextui-org/react";
 
-export default function Answerer() {
-  let gameId;
+export default function Answerer({ searchParams }) {
+  const gameId = searchParams.gameId;
   const [game, setGame] = useState(null);
 
   useEffect(() => {
-    gameId = localStorage.getItem("gameId") || ""
     if (!gameId) return;
 
     fetch(`http://localhost:5000/api/games/${gameId}`)

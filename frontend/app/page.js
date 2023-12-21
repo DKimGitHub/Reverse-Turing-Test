@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [gameId, setGameId] = useState(null);
+
   useEffect(() => {
     fetch("http://localhost:5000/api/games", { method: "POST" })
       .then((res) => res.json())
       .then((data) => {
-        localStorage.setItem('gameId', data.id);
+        setGameId(data.id);
       });
   }, []);
   return (
@@ -25,13 +27,13 @@ export default function Home() {
       </p>
       <div className="pt-10 text-center">
         <Link
-          href="/questioner"
+          href={gameId ? `/questioner?gameId=${gameId}` : "/"}
           className="rounded-lg bg-slate-500 m-2 p-4 text-2xl"
         >
           I wanna be the questioner!
         </Link>
         <Link
-          href="/answerer"
+          href={gameId ? `/answerer?gameId=${gameId}` : "/"}
           className="rounded-lg bg-slate-500 m-2 p-4 text-2xl w-16"
         >
           I wanna be the answerer!
