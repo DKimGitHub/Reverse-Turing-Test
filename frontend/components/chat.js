@@ -1,6 +1,8 @@
 "use client";
 
 export default function Chat({ question, answer }) {
+  if (answer === null) return null;
+
   return (
     <div className="flex-col">
       <div className="flex-col rounded-lg m-2 overflow-auto">

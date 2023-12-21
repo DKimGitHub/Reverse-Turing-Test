@@ -10,11 +10,15 @@ export default function Questioner({ searchParams }) {
   useEffect(() => {
     if (!gameId) return;
 
-    fetch(`http://localhost:5000/api/games/${gameId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setGame(data);
-      });
+    const interval = setInterval(() => {
+      fetch(`http://localhost:5000/api/games/${gameId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setGame(data);
+        });
+    }, 500);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

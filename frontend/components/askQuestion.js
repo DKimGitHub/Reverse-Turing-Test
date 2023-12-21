@@ -6,8 +6,11 @@ export default function AskQuestion({ gameId }) {
   const [question, setQuestion] = useState("");
 
   const clickHandler = () => {
-    fetch('/api/ask-question', {
+    fetch('http://localhost:5000/api/ask-question', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         game_id: gameId,
         question
