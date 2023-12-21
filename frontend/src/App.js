@@ -8,7 +8,7 @@ function App() {
     fetch('http://localhost:5000/api/games', { method: 'POST' })
       .then(res => res.json())
       .then(json => setGameId(json.id));
-  })
+  }, [])
 
   return (
     <div className="App">
