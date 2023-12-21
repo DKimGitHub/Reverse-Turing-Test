@@ -1,6 +1,7 @@
 "use client";
 import { Textarea } from "@nextui-org/react";
 import { useState, useEffect } from "react";
+import AnswerQuestion from "../../components/answerQuestion";
 
 export default function Answerer({ searchParams }) {
   const gameId = searchParams.gameId;
@@ -16,9 +17,6 @@ export default function Answerer({ searchParams }) {
       });
   }, []);
 
-  const clickHandler = () => {
-    return null;
-  };
   return (
     <div className="h-full">
       <div className="grid grid-cols-2 bg-slate-500 rounded-md">
@@ -62,24 +60,7 @@ export default function Answerer({ searchParams }) {
           </div>
         </div>
       </div> */}
-
-      <div className="min-h-36 flex justify-center items-center">
-        <div className="w-[48rem] flex">
-          <Textarea
-            aria-label="Answer Field"
-            className="flex-1"
-            fullWidth
-            placeholder="Answer the question like an AI!"
-            minRows={1}
-          />
-          <button
-            onClick={clickHandler}
-            className="m-2 flex-none text-base font-medium leading-4"
-          >
-            Answer
-          </button>
-        </div>
-      </div>
+    <AnswerQuestion  gameId={gameId} />
     </div>
   );
 }
